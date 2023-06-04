@@ -20,7 +20,7 @@ class MusicBeatState extends #if MODCHARTING_TOOLS modcharting.ModchartMusicBeat
 	private var controls(get, never):Controls;
 
 	public static var windowNameSuffix:String = "";
-	public static var windowNamePrefix:String = "Leather Engine";
+	public static var windowNamePrefix:String = "Friday Night Funkin'";
 
 	public static var fullscreenBind:String = "F11";
 

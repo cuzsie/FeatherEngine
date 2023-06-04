@@ -2,7 +2,6 @@ package states;
 
 import utilities.Options;
 import flixel.util.FlxTimer;
-import game.Replay;
 import utilities.MusicUtilities;
 import lime.utils.Assets;
 #if discord_rpc
@@ -30,7 +29,7 @@ class MainMenuState extends MusicBeatState
 
 	var menuItems:FlxTypedGroup<FlxSprite>;
 
-	var optionShit:Array<String> = ['story mode', 'freeplay', 'options'];
+	var optionShit:Array<String> = ['story mode', 'freeplay'];
 
 	var magenta:FlxSprite;
 	var camFollow:FlxObject;
@@ -44,12 +43,8 @@ class MainMenuState extends MusicBeatState
 		if(PolymodHandler.metadataArrays.length > 0)
 			optionShit.push('mods');
 
-		if(Replay.getReplayList().length > 0)
-			optionShit.push('replays');
-		
-		#if !web
-		//optionShit.push('multiplayer');
-		#end
+		optionShit.push("options");
+
 		
 		MusicBeatState.windowNameSuffix = "";
 		
@@ -127,9 +122,15 @@ class MainMenuState extends MusicBeatState
 
 		FlxG.camera.follow(camFollow, null, 0.06);
 
-		var versionShit:FlxText = new FlxText(5, FlxG.height - 18, 0, (utilities.Options.getData("watermarks") ? TitleState.version : "v0.2.7.1"), 16);
-		versionShit.scrollFactor.set();
-		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		var sysName:String = "";
+
+		#if sys
+		sysName = "(" + Sys.systemName() + ")";
+		#end
+
+		var versionShit:FlxText = new FlxText(5, FlxG.height - 25, 0, "Feather Engine " + TitleState.version + " " + sysName, 16);
+		versionShit.scrollFactor.set();	
+		versionShit.setFormat(Paths.font("game.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
 
 		changeItem();
@@ -225,14 +226,12 @@ class MainMenuState extends MusicBeatState
 			case 'options':
 				FlxTransitionableState.skipNextTransIn = true;
 				FlxTransitionableState.skipNextTransOut = true;
+				OptionsMenu.lastState = new MainMenuState();
 				FlxG.switchState(new OptionsMenu());
 
 			#if sys
 			case 'mods':
 				FlxG.switchState(new ModsMenu());
-
-			case 'replays':
-				FlxG.switchState(new ReplaySelectorState());
 			#end
 		}
 	}

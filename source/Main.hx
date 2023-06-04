@@ -5,15 +5,21 @@ import openfl.text.TextFormat;
 import ui.SimpleInfoDisplay;
 import flixel.FlxGame;
 import openfl.display.Sprite;
+import flixel.FlxG;
 
-class Main extends Sprite {
-	public function new() {
+class Main extends Sprite 
+{
+	public function new() 
+	{
 		super();
 
 		CoolUtil.haxe_trace = haxe.Log.trace;
 		haxe.Log.trace = CoolUtil.haxe_print;
-
+			
 		addChild(new FlxGame(0, 0, states.TitleState, 60, 60, true));
+
+		FlxG.game.soundTray.volumeDownSound = Paths.sound("menu/volumeDown", "preload");
+		FlxG.game.soundTray.volumeUpSound = Paths.sound("menu/volumeUp", "preload");
 
 		#if !mobile
 		display = new SimpleInfoDisplay(8, 3, 0xFFFFFF, "_sans");

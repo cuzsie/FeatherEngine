@@ -61,6 +61,9 @@ class Paths {
 	inline static public function json(key:String, ?library:String):String
 		return getPath('data/$key.json', TEXT, library);
 
+	inline static public function chart(key:String, ?library:String):String
+		return getPath('songs/$key.funkin', TEXT, library);
+
 	static public function video(key:String, ?ext:String = VIDEO_EXT):String
 		return 'assets/videos/$key.$ext';
 

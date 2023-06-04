@@ -154,7 +154,7 @@ class TitleState extends MusicBeatState {
 			Main.changeFont(utilities.Options.getData("infoDisplayFont"));
 		}
 
-		version = '${MusicBeatState.windowNamePrefix}-git (v${Assets.getText("version.txt")})';
+		version = 'v${Assets.getText("version.txt")}';
 
 		persistentUpdate = true;
 

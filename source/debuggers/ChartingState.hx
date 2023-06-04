@@ -532,6 +532,7 @@ class ChartingState extends MusicBeatState {
 	}
 
 	var check_mustHitSection:FlxUICheckBox;
+	var check_gfSection:FlxUICheckBox;
 	var check_changeBPM:FlxUICheckBox;
 	var stepperSectionBPM:FlxUINumericStepper;
 	var check_altAnim:FlxUICheckBox;
@@ -592,6 +593,10 @@ class ChartingState extends MusicBeatState {
 		check_mustHitSection = new FlxUICheckBox(10, 50, null, null, "Camera points at P1", 100);
 		check_mustHitSection.name = 'check_mustHit';
 		check_mustHitSection.checked = true;
+
+		check_gfSection = new FlxUICheckBox(10, 100, null, null, "Camera points at GF", 100);
+		check_gfSection.name = 'check_pointGF';
+		check_gfSection.checked = true;
 
 		check_altAnim = new FlxUICheckBox(10, 195, null, null, "Enemy Alt Animation", 100);
 		check_altAnim.name = 'check_altAnim';
@@ -709,6 +714,7 @@ class ChartingState extends MusicBeatState {
 		tab_group_section.add(copySectionCount);
 		tab_group_section.add(stepperText);
 		tab_group_section.add(check_mustHitSection);
+		tab_group_section.add(check_gfSection);
 		tab_group_section.add(check_altAnim);
 		tab_group_section.add(check_changeBPM);
 		tab_group_section.add(copyButton);
@@ -1508,6 +1514,7 @@ class ChartingState extends MusicBeatState {
 		var sec = _song.notes[curSection];
 
 		check_mustHitSection.checked = sec.mustHitSection;
+		check_gfSection.checked = sec.camPointGF;
 		check_altAnim.checked = sec.altAnim;
 		check_changeBPM.checked = sec.changeBPM;
 		check_changeTimeScale.checked = sec.changeTimeScale;
@@ -1729,6 +1736,7 @@ class ChartingState extends MusicBeatState {
 			bpm: _song.bpm,
 			changeBPM: false,
 			mustHitSection: true,
+			camPointGF: false,
 			sectionNotes: [],
 			typeOfSection: 0,
 			altAnim: false,

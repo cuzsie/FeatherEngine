@@ -1,5 +1,6 @@
 package states;
 
+import flixel.addons.display.FlxBackdrop;
 import utilities.Options;
 import utilities.CoolUtil;
 import substates.UISkinSelect;
@@ -8,6 +9,7 @@ import modding.CharacterCreationState;
 import utilities.MusicUtilities;
 import ui.Option;
 import ui.Checkbox;
+import flixel.FlxState;
 import flixel.group.FlxGroup;
 import debuggers.ChartingState;
 import debuggers.StageMakingState;
@@ -41,8 +43,9 @@ class OptionsMenu extends MusicBeatState {
 		"Categories" => [
 			new PageOption("Gameplay", 0, "Gameplay"),
 			new PageOption("Graphics", 1, "Graphics"),
-			new PageOption("Tools (Very WIP)", 2, "Tools"),
-			new PageOption("Misc", 3, "Misc")
+			new PageOption("Modding", 2, "Tools"),
+			new PageOption("Game Modifiers", 3, "Modifiers"),
+			new PageOption("Misc", 4, "Misc")
 		],
 		"Gameplay" => [
 			new PageOption("Back", 0, "Categories"),
@@ -95,14 +98,17 @@ class OptionsMenu extends MusicBeatState {
 			new BoolOption("Discord RPC", "discordRPC", 5),
 			#end
 			new StringSaveOption("Cutscenes Play On", ["story", "freeplay", "both"], 6, "cutscenePlaysOn"),
-			new StringSaveOption("Play As", ["bf", "opponent"], 7, "playAs"),
 			new BoolOption("Disable Debug Menus", "disableDebugMenus", 10),
-			new BoolOption("Invisible Notes", "invisibleNotes", 11),
 			new BoolOption("Auto Pause", "autoPause", 12),
 			new BoolOption("Freeplay Corruption", "loadAsynchronously", 13),
 			new BoolOption("Flixel Splash Screen", "flixelStartupScreen", 14),
 			new BoolOption("Skip Results", "skipResultsScreen", 15),
 			new BoolOption("Show Score", "showScore", 16),
+		],
+		"Modifiers" => [
+			new PageOption("Back", 0, "Categories"),
+			new StringSaveOption("Play As", ["bf", "opponent"], 1, "playAs"),
+			new BoolOption("Invisible Notes", "invisibleNotes", 2)
 		],
 		"Optimizations" => [
 			new PageOption("Back", 0, "Graphics"),
@@ -167,8 +173,10 @@ class OptionsMenu extends MusicBeatState {
 
 	public var page:FlxTypedGroup<Option> = new FlxTypedGroup<Option>();
 	public static var instance:OptionsMenu;
+	public static var lastState:FlxState;
 
-	override function create():Void {
+	override function create():Void 
+	{
 		if (ui_Skin == null || ui_Skin == "default")
 			ui_Skin = Options.getData("uiSkin");
 
@@ -182,24 +190,20 @@ class OptionsMenu extends MusicBeatState {
 		MusicBeatState.windowNameSuffix = "";
 		instance = this;
 
-		var menuBG:FlxSprite;
+		var bg:FlxSprite = new FlxSprite(-600, -200);
+		bg.loadGraphic(Paths.image("stage/stageback", "stages"));
+		bg.scrollFactor.set(0.9, 0.9);
+		add(bg);
 
-		if(utilities.Options.getData("menuBGs"))
-			if (!Assets.exists(Paths.image('ui skins/' + ui_Skin + '/backgrounds' + '/menuDesat')))
-				menuBG = new FlxSprite().loadGraphic(Paths.image('ui skins/default/backgrounds/menuDesat'));
-			else
-				menuBG = new FlxSprite().loadGraphic(Paths.image('ui skins/' + ui_Skin + '/backgrounds' + '/menuDesat'));
-		else
-			menuBG = new FlxSprite().makeGraphic(1286, 730, FlxColor.fromString("#E1E1E1"), false, "optimizedMenuDesat");
+		var stageFront:FlxSprite = new FlxSprite(-650, 600);
+		stageFront.loadGraphic(Paths.image("stage/stagefront", "stages"));
+		stageFront.setGraphicSize(Std.int(stageFront.width * 1.1));
+		stageFront.scrollFactor.set(1, 1);
+		stageFront.updateHitbox();
+		add(stageFront);
 
-		menuBG.color = 0xFFea71fd;
-		menuBG.setGraphicSize(Std.int(menuBG.width * 1.1));
-		menuBG.updateHitbox();
-		menuBG.screenCenter();
-		menuBG.antialiasing = true;
-		add(menuBG);
-
-		super.create();
+		bgScroller = new FlxBackdrop(Paths.image("endChecker", "preload"));
+		add(bgScroller);
 
 		add(page);
 
@@ -207,7 +211,14 @@ class OptionsMenu extends MusicBeatState {
 
 		if (FlxG.sound.music == null)
 			FlxG.sound.playMusic(MusicUtilities.GetOptionsMenuMusic(), 0.7, true);
+
+		FlxG.camera.zoom = 0.9;
+
+		super.create();
 	}
+
+	var bgScroller:FlxBackdrop;
+	public var curPageName:String = "";
 
 	public static function LoadPage(Page_Name:String):Void {
 		inMenu = true;
@@ -218,6 +229,8 @@ class OptionsMenu extends MusicBeatState {
 
 		for (x in instance.pages.get(Page_Name).copy()) {
 			curPage.add(x);
+
+			instance.curPageName = Page_Name;
 		}
 
 		inMenu = false;
@@ -231,6 +244,9 @@ class OptionsMenu extends MusicBeatState {
 
 	override function update(elapsed:Float) {
 		super.update(elapsed);
+
+		bgScroller.x -= 0.3;
+		bgScroller.y -= 0.4;
 
 		if (!inMenu) {
 			if (-1 * Math.floor(FlxG.mouse.wheel) != 0) {
@@ -249,8 +265,15 @@ class OptionsMenu extends MusicBeatState {
 			}
 
 			if (controls.BACK)
-				FlxG.switchState(new MainMenuState());
-		} else {
+			{
+				if (curPageName != "Categories")
+					LoadPage("Categories");
+				else
+					FlxG.switchState(OptionsMenu.lastState);
+			}
+		} 
+		else 
+		{
 			if (controls.BACK)
 				inMenu = false;
 		}

@@ -104,7 +104,7 @@ class Highscore
 		if (diff.toLowerCase() != "normal")
 			daSong += "-" + diff.toLowerCase();
 
-		return daSong;
+		return diff.toLowerCase();
 	}
 
 	public static function getScore(song:String, diff:String, ?formatted:Bool = false):Int

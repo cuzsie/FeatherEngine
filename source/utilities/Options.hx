@@ -17,8 +17,8 @@ typedef DefaultOption = {
 }
 
 class Options {
-	public static var bindNamePrefix:String = "leather_engine-";
-	public static var bindPath:String = "leather128";
+	public static var bindNamePrefix:String = "funkin-";
+	public static var bindPath:String = "ninjamuffin99";
 
 	public static var saves:Map<String, FlxSave> = [];
 

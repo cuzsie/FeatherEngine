@@ -2,8 +2,8 @@
 <project>
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="Leather Engine" file="Leather Engine" packageName="com.leather128.funkin"
-		package="com.leather128.funkin" main="Main" version="0.5.0" company="leather128" />
+	<app title="Friday Night Funkin'" file="Funkin'" packageName="com.ninjamuffin99.funkin"
+		package="com.ninjamuffin99.funkin" main="Main" version="0.5.0" company="ninjamuffin99" />
 
 	<!-- totally not stolen from psych engine -->
 	<haxedef name="LINC_LUA_RELATIVE_DYNAMIC_LIB" /> <!-- i think this is important -->

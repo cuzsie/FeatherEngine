@@ -247,15 +247,17 @@ class FreeplayState extends MusicBeatState {
 		add(textBG);
 
 		#if PRELOAD_ALL
-		var leText:String = "Press RESET to reset song score and rank ~ Press SPACE to play Song Audio ~ Shift + LEFT and RIGHT to change song speed";
+		var leText:String = "Press RESET to reset song score and rank | Press SPACE to play Song Audio | Shift + LEFT and RIGHT to change song speed";
 		#else
 		var leText:String = "Press RESET to reset song score";
 		#end
 
 		var text:FlxText = new FlxText(textBG.x - 1, textBG.y + 4, FlxG.width, leText, 18);
-		text.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT);
+		text.setFormat(Paths.font("game.ttf"), 16, FlxColor.WHITE, RIGHT);
 		text.scrollFactor.set();
 		add(text);
+
+		FlxG.camera.zoom = 0.9;
 
 		super.create();
 	}
@@ -452,21 +454,21 @@ class FreeplayState extends MusicBeatState {
 
 						PlayState.loadChartEvents = true;
 						destroyFreeplayVocals();
-						LoadingState.loadAndSwitchState(new PlayState());
+						LoadingState.loadAndSwitchState(new LoadPlayState());
 					} else {
 						if (Assets.exists(Paths.inst(songs[curSelected].songName.toLowerCase(), curDiffString)))
 							CoolUtil.coolError(PlayState.SONG.song.toLowerCase()
 								+ " (JSON) != "
 								+ songs[curSelected].songName.toLowerCase() + " (FREEPLAY)\nTry making them the same.",
-								"Leather Engine's No Crash, We Help Fix Stuff Tool");
+								"Funkin'");
 						else
 							CoolUtil.coolError("Your song seems to not have an Inst.ogg, check the folder name in 'songs'!",
-								"Leather Engine's No Crash, We Help Fix Stuff Tool");
+								"Funkin'");
 					}
 				} else
 					CoolUtil.coolError(songs[curSelected].songName.toLowerCase()
 						+ " doesn't match with any song audio files!\nTry fixing it's name in freeplaySonglist.txt",
-						"Leather Engine's No Crash, We Help Fix Stuff Tool");
+						"Funkin'");
 			}
 		}
 	}
@@ -487,9 +489,9 @@ class FreeplayState extends MusicBeatState {
 		#end
 
 		if (curDiffArray.length > 1)
-			diffText.text = "< " + curDiffString + " ~ " + curRank + " >";
+			diffText.text = "< " + curDiffString + " > | " + curRank + " ";
 		else
-			diffText.text = curDiffString + " ~ " + curRank + "  ";
+			diffText.text = curDiffString + " | " + curRank + " ";
 	}
 
 	function changeSelection(change:Int = 0) {

@@ -72,39 +72,45 @@ class Song {
 		this.bpm = bpm;
 	}
 
-	public static function loadFromJson(jsonInput:String, ?folder:String):SwagSong {
+	public static function loadFromJson(jsonInput:String, ?folder:String):SwagSong 
+	{
 		var original_Folder = folder;
-		folder = "song data/" + folder + "/";
+		folder = folder + "/";
 		var rawJson:String = "";
 		rawJson = Assets.getText(Paths.json(folder.toLowerCase() + jsonInput.toLowerCase())).trim();
 
-		if (rawJson != "") {
-			while (!rawJson.endsWith("}")) {
+		if (rawJson != "") 
+		{
+			while (!rawJson.endsWith("}")) 
+			{
 				rawJson = rawJson.substr(0, rawJson.length - 1);
-				// LOL GOING THROUGH THE BULLSHIT TO CLEAN IDK WHATS STRANGE
 			}
 
 			return parseJSONshit(rawJson);
-		} else {
+		} 
+		else 
+		{
 			rawJson = Assets.getText(Paths.json("song data/tutorial/tutorial")).trim();
 
-			while (!rawJson.endsWith("}")) {
+			while (!rawJson.endsWith("}")) 
+			{
 				rawJson = rawJson.substr(0, rawJson.length - 1);
-				// LOL GOING THROUGH THE BULLSHIT TO CLEAN IDK WHATS STRANGE
 			}
 
 			return parseJSONshit(rawJson, original_Folder);
 		}
 	}
 
-	public static function parseJSONshit(rawJson:String, ?originalSongName:String):SwagSong {
+	public static function parseJSONshit(rawJson:String, ?originalSongName:String):SwagSong 
+	{
 		var swagShit:SwagSong = cast Json.parse(rawJson).song;
 		swagShit.validScore = true;
 
 		if (Std.string(swagShit.keyCount) == "null")
 			swagShit.keyCount = 4;
 
-		if (Std.string(swagShit.mania) != "null") {
+		if (Std.string(swagShit.mania) != "null") 
+		{
 			// shaggy support pog
 			switch (swagShit.mania) {
 				case 0:
@@ -136,7 +142,7 @@ class Song {
 		swagShit.mania = null;
 
 		if (swagShit.keyCount > NoteVariables.Note_Count_Directions.length)
-			swagShit.keyCount = NoteVariables.Note_Count_Directions.length; // guarenteed safe value?
+			swagShit.keyCount = NoteVariables.Note_Count_Directions.length; 
 
 		if (swagShit.events == null)
 			swagShit.events = [];
@@ -149,8 +155,8 @@ class Song {
 
 		var new_events:Array<Array<Dynamic>> = [];
 
-		for (event in swagShit.events) {
-			// aka, if(event == A Psych Engine Event Lmfao)
+		for (event in swagShit.events) 
+		{
 			if (Std.isOfType(event[0], Float) || Std.isOfType(event[0], Int) && Std.isOfType(event[1], Array)) {
 				var event_datas:Array<Array<Dynamic>> = event[1];
 

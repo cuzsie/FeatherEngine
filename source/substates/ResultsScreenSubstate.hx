@@ -1,7 +1,6 @@
 package substates;
 
 import flixel.FlxCamera;
-import ui.NoteGraph;
 import game.Song;
 import game.Highscore;
 import states.LoadingState;
@@ -49,44 +48,23 @@ class ResultsScreenSubstate extends MusicBeatSubstate {
 		add(ratings);
 
 		@:privateAccess
-		var bottomText:FlxText = new FlxText(FlxG.width, FlxG.height, 0,
-			"Press ENTER to close this menu\n" + (!PlayState.playingReplay
-				&& PlayState.SONG.validScore ? "Press SHIFT to save this replay\nPress ESCAPE to view this replay\n" : ""));
-		bottomText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, RIGHT, OUTLINE, FlxColor.BLACK);
-		bottomText.setPosition(FlxG.width - bottomText.width - 2, FlxG.height - (!PlayState.playingReplay ? 96 : 32));
+		var bottomText:FlxText = new FlxText(FlxG.width, FlxG.height, 0, "Press ENTER to close this menu");
+		bottomText.setFormat(Paths.font("game.ttf"), 32, FlxColor.WHITE, RIGHT, OUTLINE, FlxColor.BLACK);
+		bottomText.setPosition(FlxG.width - bottomText.width - 2, FlxG.height - 96);
 		bottomText.scrollFactor.set();
 		add(bottomText);
-
-		add(new NoteGraph(PlayState.instance.replay, FlxG.width - 550, 25));
 
 		cameras = [uiCamera];
 	}
 
-	override function update(elapsed:Float) {
+	override function update(elapsed:Float) 
+	{
 		super.update(elapsed);
 
-		if (FlxG.keys.justPressed.ENTER) {
+		if (FlxG.keys.justPressed.ENTER) 
+		{
 			PlayState.instance.finishSongStuffs();
             return;
         }
-
-		if (FlxG.keys.justPressed.SHIFT && !PlayState.playingReplay && PlayState.SONG.validScore)
-			PlayState.instance.saveReplay();
-
-		if (FlxG.keys.justPressed.ESCAPE && !PlayState.playingReplay && PlayState.SONG.validScore) {
-			PlayState.instance.saveReplay();
-			PlayState.instance.fixSettings();
-
-			var replay = PlayState.instance.replay;
-			var poop:String = Highscore.formatSong(replay.song, replay.difficulty);
-
-			PlayState.SONG = Song.loadFromJson(poop, replay.song);
-			PlayState.isStoryMode = false;
-			PlayState.songMultiplier = replay.songMultiplier;
-			PlayState.storyDifficultyStr = replay.difficulty.toUpperCase();
-			PlayState.playingReplay = true;
-
-			LoadingState.loadAndSwitchState(new PlayState(replay));
-		}
 	}
 }

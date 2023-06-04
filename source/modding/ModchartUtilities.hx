@@ -231,7 +231,6 @@ class ModchartUtilities {
 		setVar("strumLineY", PlayState.instance.strumLine.y);
 
 		setVar("characterPlayingAs", PlayState.characterPlayingAs);
-		setVar("inReplay", PlayState.playingReplay);
 
 		// other globals
 

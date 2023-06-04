@@ -593,6 +593,7 @@ class ChartingStateDev extends MusicBeatState
 			bpm: SONG.bpm,
 			changeBPM: false,
 			mustHitSection: true,
+			camPointGF: false,
 			sectionNotes: [],
 			typeOfSection: 0,
 			altAnim: false,
