@@ -26,26 +26,28 @@ import flixel.util.FlxColor;
 
 using StringTools;
 
-/**
-	*DEBUG MODE
- */
-class AnimationDebug extends MusicBeatState {
+// Debugger for character animations
+class AnimationDebug extends MusicBeatState 
+{
 	var char:Character;
+	
 	var animText:FlxText;
 	var moveText:FlxText;
+
 	var animList:Array<String> = [];
+
 	var curAnim:Int = 0;
+
 	var daAnim:String = 'spooky';
+
 	var camFollow:FlxObject;
+
 	var _file:FileReference;
 
-	public function new(daAnim:String = 'spooky') {
-		super();
-		this.daAnim = daAnim;
-	}
-
+	var gridCam:FlxCamera;
+	var charCam:FlxCamera;
+	var camHUD:FlxCamera;
 	var characters:Map<String, Array<String>> = ["default" => ["bf", "gf"]];
-
 	var modListLmao:Array<String> = ["default"];
 	var curCharList:Array<String>;
 
@@ -56,12 +58,14 @@ class AnimationDebug extends MusicBeatState {
 	var stage:StageGroup;
 	var stagePosition:FlxSprite;
 
-	/* CAMERA */
-	var gridCam:FlxCamera;
-	var charCam:FlxCamera;
-	var camHUD:FlxCamera;
+	public function new (daAnim:String = 'spooky') 
+	{
+		super();
+		this.daAnim = daAnim;
+	}
 
-	override function create() {
+	override function create() 
+	{
 		FlxG.mouse.visible = true;
 
 		gridCam = new FlxCamera();
@@ -97,8 +101,8 @@ class AnimationDebug extends MusicBeatState {
 		char.debugMode = true;
 		add(char);
 
-		animText = new FlxText(4, 4, 0, "BRUH BRUH BRUH: [0,0]", 20);
-		animText.font = Paths.font("vcr.ttf");
+		animText = new FlxText(4, 4, 0, "Animation: [0,0]", 20);
+		animText.font = Paths.font("game.ttf");
 		animText.scrollFactor.set();
 		animText.color = FlxColor.WHITE;
 		animText.borderColor = FlxColor.BLACK;
@@ -108,7 +112,7 @@ class AnimationDebug extends MusicBeatState {
 		add(animText);
 
 		moveText = new FlxText(4, 4, 0, "", 20);
-		moveText.font = Paths.font("vcr.ttf");
+		moveText.font = Paths.font("game.ttf");
 		moveText.x = FlxG.width - moveText.width - 4;
 		moveText.scrollFactor.set();
 		moveText.color = FlxColor.WHITE;

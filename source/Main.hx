@@ -1,5 +1,7 @@
 package;
 
+import states.TitleState;
+import states.SplashScreenState;
 import utilities.CoolUtil;
 import openfl.text.TextFormat;
 import ui.SimpleInfoDisplay;
@@ -16,7 +18,7 @@ class Main extends Sprite
 		CoolUtil.haxe_trace = haxe.Log.trace;
 		haxe.Log.trace = CoolUtil.haxe_print;
 			
-		addChild(new FlxGame(0, 0, states.TitleState, 60, 60, true));
+		addChild(new FlxGame(0, 0, SplashScreenState, 60, 60, true));
 
 		FlxG.game.soundTray.volumeDownSound = Paths.sound("menu/volumeDown", "preload");
 		FlxG.game.soundTray.volumeUpSound = Paths.sound("menu/volumeUp", "preload");

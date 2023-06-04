@@ -22,7 +22,7 @@ class DiscordClient
 	{
 		trace("Discord Client starting...");
 		DiscordRpc.start({
-			clientID: "864980501004812369",
+			clientID: "1114938477042212924",
 			onReady: onReady,
 			onError: onError,
 			onDisconnected: onDisconnected
@@ -55,8 +55,8 @@ class DiscordClient
 		DiscordRpc.presence({
 			details: "In the Menus",
 			state: null,
-			largeImageKey: 'logo',
-			largeImageText: "Leather Engine"
+			largeImageKey: 'FunkinRPCIcon',
+			largeImageText: "Funkin'"
 		});
 	}
 
@@ -86,22 +86,18 @@ class DiscordClient
 		var startTimestamp:Float = if (hasStartTimestamp) Date.now().getTime() else 0;
 
 		if (endTimestamp > 0)
-		{
 			endTimestamp = startTimestamp + endTimestamp;
-		}
 
-		DiscordRpc.presence({
+		DiscordRpc.presence
+		({
 			details: details,
 			state: state,
-			largeImageKey: 'logo',
-			largeImageText: "Leather Engine",
+			largeImageKey: 'FunkinRPCIcon',
+			largeImageText: "Funkin'",
 			smallImageKey: smallImageKey,
-			// Obtained times are in milliseconds so they are divided so Discord can use it
 			startTimestamp: Std.int(startTimestamp / 1000),
 			endTimestamp: Std.int(endTimestamp / 1000)
 		});
-
-		// trace('Discord RPC Updated. Arguments: $details, $state, $smallImageKey, $hasStartTimestamp, $endTimestamp');
 	}
 }
 #end

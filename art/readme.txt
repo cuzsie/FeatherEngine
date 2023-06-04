@@ -53,6 +53,12 @@ It's made in Haxe / HaxeFlixel
 MUSIC IS ON SPOTIFY AND BANDCAMP AND EVERYWHERE ELSE PROB TOO
 https://kawaisprite.bandcamp.com/album/friday-night-funkin-ost-vol-1
 
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
+    FEATHER ENGINE LMAO
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
+
+go check out da github for questions n stuff!! https://github.com/cuzsie/FeatherEngine
+thats about it LOL
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
     FINAL WORDS / CREDITS

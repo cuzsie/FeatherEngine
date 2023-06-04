@@ -1,5 +1,6 @@
 package states;
 
+import featherengine.Util;
 import game.Conductor;
 #if sys
 import sys.thread.Thread;
@@ -257,8 +258,6 @@ class FreeplayState extends MusicBeatState {
 		text.scrollFactor.set();
 		add(text);
 
-		FlxG.camera.zoom = 0.9;
-
 		super.create();
 	}
 
@@ -430,21 +429,21 @@ class FreeplayState extends MusicBeatState {
 				changeSelection();
 			}
 
-			if (FlxG.keys.justPressed.ENTER && canEnterSong) {
-				var poop:String = Highscore.formatSong(songs[curSelected].songName.toLowerCase(), curDiffString);
+			if (FlxG.keys.justPressed.ENTER && canEnterSong) 
+			{
+				var file:String = curDiffString.toLowerCase();
 
-				trace(poop);
-
-				if (Assets.exists(Paths.json("song data/" + songs[curSelected].songName.toLowerCase() + "/" + poop))) {
-					PlayState.SONG = Song.loadFromJson(poop, songs[curSelected].songName.toLowerCase());
+				if (FeatherUtil.chartExists(songs[curSelected].songName, file)) 
+				{
+					PlayState.SONG = Song.loadFromJson(curDiffString.toLowerCase(), songs[curSelected].songName.toLowerCase());
 					PlayState.isStoryMode = false;
 					PlayState.songMultiplier = curSpeed;
 					PlayState.storyDifficultyStr = curDiffString.toUpperCase();
 
 					PlayState.storyWeek = songs[curSelected].week;
-					trace('CUR WEEK' + PlayState.storyWeek);
 
-					if (Assets.exists(Paths.inst(PlayState.SONG.song, PlayState.storyDifficultyStr))) {
+					if (Assets.exists(Paths.inst(PlayState.SONG.song, PlayState.storyDifficultyStr))) 
+					{
 						#if sys
 						stop_loading_songs = true;
 						#end
@@ -455,20 +454,31 @@ class FreeplayState extends MusicBeatState {
 						PlayState.loadChartEvents = true;
 						destroyFreeplayVocals();
 						LoadingState.loadAndSwitchState(new LoadPlayState());
-					} else {
+					} 
+					else 
+					{
 						if (Assets.exists(Paths.inst(songs[curSelected].songName.toLowerCase(), curDiffString)))
-							CoolUtil.coolError(PlayState.SONG.song.toLowerCase()
+							CoolUtil.coolError
+							(
+								PlayState.SONG.song.toLowerCase()
 								+ " (JSON) != "
 								+ songs[curSelected].songName.toLowerCase() + " (FREEPLAY)\nTry making them the same.",
-								"Funkin'");
+								"Funkin'"
+							);
 						else
-							CoolUtil.coolError("Your song seems to not have an Inst.ogg, check the folder name in 'songs'!",
-								"Funkin'");
+							CoolUtil.coolError
+							(
+								"This song doesn't have an insturmental.\nYou need one of those i think!!!!\n\n(No file named 'Inst.ogg' exists in song path.)",
+								"Funkin'"
+							);
 					}
-				} else
-					CoolUtil.coolError(songs[curSelected].songName.toLowerCase()
-						+ " doesn't match with any song audio files!\nTry fixing it's name in freeplaySonglist.txt",
-						"Funkin'");
+				} 
+				else
+					CoolUtil.coolError
+					(
+						"A chart file doesn't exist for this difficulty.\nYou need one of those i think!!!!\n\n(No file named 'CURRENTDIFF.funkin' exists in song path.)",
+						"Funkin'"
+					);
 			}
 		}
 	}

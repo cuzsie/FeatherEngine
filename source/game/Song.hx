@@ -77,7 +77,7 @@ class Song {
 		var original_Folder = folder;
 		folder = folder + "/";
 		var rawJson:String = "";
-		rawJson = Assets.getText(Paths.json(folder.toLowerCase() + jsonInput.toLowerCase())).trim();
+		rawJson = Assets.getText(Paths.chart(folder.toLowerCase() + jsonInput.toLowerCase())).trim();
 
 		if (rawJson != "") 
 		{
@@ -90,7 +90,7 @@ class Song {
 		} 
 		else 
 		{
-			rawJson = Assets.getText(Paths.json("song data/tutorial/tutorial")).trim();
+			rawJson = Assets.getText(Paths.chart("song data/tutorial/tutorial")).trim();
 
 			while (!rawJson.endsWith("}")) 
 			{

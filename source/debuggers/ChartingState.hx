@@ -11,6 +11,7 @@ import lime.tools.AssetType;
 import game.Song;
 import states.LoadingState;
 import utilities.CoolUtil;
+import utilities.Options;
 import game.Conductor;
 import states.PlayState;
 import states.MusicBeatState;
@@ -47,7 +48,10 @@ import openfl.net.FileReference;
 
 using StringTools;
 
-class ChartingState extends MusicBeatState {
+class ChartingState extends MusicBeatState
+{
+	public static var instance:ChartingState;
+
 	var _file:FileReference;
 
 	var UI_box:FlxUITabMenu;
@@ -78,7 +82,7 @@ class ChartingState extends MusicBeatState {
 
 	var gridBG:FlxSprite;
 
-	var _song:SwagSong;
+	public var _song:SwagSong;
 
 	var difficulty:String = 'normal';
 
@@ -124,7 +128,17 @@ class ChartingState extends MusicBeatState {
 	var min_zoom:Float = 0.5;
 	var max_zoom:Float = 16;
 
-	override function create() {
+	var ui_Skin:Null<String>;
+
+	var bg:FlxSprite;
+
+	override function create() 
+	{
+		instance = this;
+
+		if (ui_Skin == null || ui_Skin == "default")
+			ui_Skin = Options.getData("uiSkin");
+
 		#if NO_PRELOAD_ALL
 		// FOR WHEN COMING IN FROM THE TOOLS PAGE LOL
 		if (Assets.getLibrary("shared") == null)
@@ -153,6 +167,18 @@ class ChartingState extends MusicBeatState {
 			base_array.push(name);
 			characters.set(mod, base_array);
 		}
+
+		if (utilities.Options.getData("menuBGs"))
+			if (!Assets.exists(Paths.image('ui skins/' + ui_Skin + '/backgrounds' + '/menuBG')))
+				bg = new FlxSprite().loadGraphic(Paths.image('ui skins/default/backgrounds/menuDesat'));
+			else
+				bg = new FlxSprite().loadGraphic(Paths.image('ui skins/' + ui_Skin + '/backgrounds' + '/menuDesat'));
+		else
+			bg = new FlxSprite().makeGraphic(1286, 730, FlxColor.fromString("#E1E1E1"), false, "optimizedMenuDesat");
+
+		bg.scrollFactor.set(0,0);
+		bg.screenCenter();
+		add(bg);
 
 		gridBG = FlxGridOverlay.create(GRID_SIZE, GRID_SIZE, GRID_SIZE * 8, GRID_SIZE * 16);
 		add(gridBG);
@@ -235,8 +261,8 @@ class ChartingState extends MusicBeatState {
 
 		var tabs = [
 			{name: "Song", label: 'Song'},
-			{name: "Chart", label: 'Chart'},
-			{name: "Art", label: 'Art'},
+			{name: "Chart", label: 'Section'},
+			{name: "Art", label: 'Stage'},
 			{name: "Events", label: "Events"}
 		];
 
@@ -252,6 +278,7 @@ class ChartingState extends MusicBeatState {
 		UI_box = new FlxUITabMenu(null, tabs, true);
 
 		UI_box.resize(300, 400);
+		UI_box.color = FlxColor.fromRGB(0, 0, 0, 75);
 		UI_box.x = 0;
 		UI_box.y = 100;
 		add(UI_box);
@@ -1150,6 +1177,7 @@ class ChartingState extends MusicBeatState {
 
 		strumLine.y = getYfromStrum((Conductor.songPosition - sectionStartTime()) % (Conductor.stepCrochet * Conductor.stepsPerSection));
 		cameraShitThing.y = strumLine.y;
+		cameraShitThing.x = strumLine.x;
 
 		if (hitsounds) {
 			curRenderedNotes.forEach(function(note:Note) {

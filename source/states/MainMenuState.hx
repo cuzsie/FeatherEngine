@@ -166,6 +166,11 @@ class MainMenuState extends MusicBeatState
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 				changeItem(1);
 			}
+			
+			if (FlxG.keys.justPressed.SEVEN)
+			{
+				FlxG.switchState(new KickstarterState());
+			}
 
 			if (controls.ACCEPT)
 			{

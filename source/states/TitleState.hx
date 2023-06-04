@@ -46,7 +46,8 @@ class TitleState extends MusicBeatState {
 	static var firstTimeStarting:Bool = false;
 	static var doneFlixelSplash:Bool = false;
 
-	override public function create():Void {
+	override public function create():Void 
+	{
 		MusicBeatState.windowNameSuffix = "";
 
 		if (!firstTimeStarting) {
@@ -63,35 +64,12 @@ class TitleState extends MusicBeatState {
 
 			MusicBeatState.windowNamePrefix = Assets.getText(Paths.txt("windowTitleBase", "preload"));
 
-			#if FLX_NO_DEBUG
-			if (utilities.Options.getData("flixelStartupScreen") && !doneFlixelSplash) {
-				doneFlixelSplash = true;
-				flixel.system.FlxSplash.nextState = states.TitleState;
-				FlxG.switchState(new flixel.system.FlxSplash());
-				return;
-			}
-			#end
-
 			if (utilities.Options.getData("flashingLights") == null)
 				FlxG.switchState(new FlashingLightsMenu());
 
 			curWacky = FlxG.random.getObject(getIntroTextShit());
 
 			super.create();
-
-			#if discord_rpc
-			if (!DiscordClient.started && utilities.Options.getData("discordRPC"))
-				DiscordClient.initialize();
-
-			Application.current.onExit.add(function(exitCode) {
-				DiscordClient.shutdown();
-
-				for (key in Options.saves.keys()) {
-					if (key != null)
-						Options.saves.get(key).close();
-				}
-			}, false, 100);
-			#end
 
 			firstTimeStarting = true;
 		}
@@ -128,10 +106,6 @@ class TitleState extends MusicBeatState {
 
 			transIn = FlxTransitionableState.defaultTransIn;
 			transOut = FlxTransitionableState.defaultTransOut;
-
-			// HAD TO MODIFY SOME BACKEND SHIT
-			// IF THIS PR IS HERE IF ITS ACCEPTED UR GOOD TO GO
-			// https://github.com/HaxeFlixel/flixel-addons/pull/348
 
 			if (utilities.Options.getData("oldTitle"))
 				playTitleMusic();
@@ -171,7 +145,14 @@ class TitleState extends MusicBeatState {
 
 		add(bg);
 
-		if (utilities.Options.getData("oldTitle")) {
+		gfDance = new FlxSprite(FlxG.width * 0.4, FlxG.height * 0.07);
+		gfDance.frames = Paths.getSparrowAtlas('title/gfDanceTitle');
+		gfDance.animation.addByIndices('danceLeft', 'gfDance', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
+		gfDance.animation.addByIndices('danceRight', 'gfDance', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
+		gfDance.antialiasing = true;
+
+		if (utilities.Options.getData("oldTitle")) 
+		{
 			old_logo = new FlxSprite().loadGraphic(Paths.image('title/logo'));
 			old_logo.screenCenter();
 			old_logo.antialiasing = true;
@@ -179,12 +160,10 @@ class TitleState extends MusicBeatState {
 			old_logo_black = new FlxSprite().loadGraphicFromSprite(old_logo);
 			old_logo_black.screenCenter();
 			old_logo_black.color = FlxColor.BLACK;
-		} else {
+		} 
+		else 
+		{
 			logoBl = new FlxSprite(0, 0);
-
-			if (utilities.Options.getData("watermarks"))
-				logoBl.frames = Paths.getSparrowAtlas('title/leatherLogoBumpin');
-			else
 				logoBl.frames = Paths.getSparrowAtlas('title/logoBumpin');
 
 			logoBl.antialiasing = true;
@@ -192,12 +171,6 @@ class TitleState extends MusicBeatState {
 			logoBl.animation.play('bump');
 			logoBl.updateHitbox();
 		}
-
-		gfDance = new FlxSprite(FlxG.width * 0.4, FlxG.height * 0.07);
-		gfDance.frames = Paths.getSparrowAtlas('title/gfDanceTitle');
-		gfDance.animation.addByIndices('danceLeft', 'gfDance', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
-		gfDance.animation.addByIndices('danceRight', 'gfDance', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
-		gfDance.antialiasing = true;
 
 		titleText = new FlxSprite(100, FlxG.height * 0.8);
 		titleText.frames = Paths.getSparrowAtlas('title/titleEnter');
@@ -235,11 +208,8 @@ class TitleState extends MusicBeatState {
 		ngSpr.antialiasing = true;
 
 		FlxG.mouse.visible = false;
-
-		if (utilities.Options.getData("watermarks"))
-			titleTextData = CoolUtil.coolTextFile(Paths.txt("watermarkTitleText", "preload"));
-		else
-			titleTextData = CoolUtil.coolTextFile(Paths.txt("titleText", "preload"));
+		
+		titleTextData = CoolUtil.coolTextFile(Paths.txt("titleText", "preload"));
 
 		if (initialized)
 			skipIntro();
@@ -305,7 +275,8 @@ class TitleState extends MusicBeatState {
 
 			transitioning = true;
 
-			new FlxTimer().start(2, function(tmr:FlxTimer) {
+			new FlxTimer().start(2, function(tmr:FlxTimer) 
+			{
 				var http = new haxe.Http("https://raw.githubusercontent.com/Leather128/LeatherEngine/main/version.txt");
 
 				http.onData = function(data:String) {
@@ -409,8 +380,6 @@ class TitleState extends MusicBeatState {
 				case 16:
 					skipIntro();
 			}
-
-			MusicBeatState.windowNameSuffix = skippedIntro ? "" : " " + Std.string(Math.min(15 - (curBeat - 1), 15));
 		} else {
 			remove(ngSpr);
 			remove(credGroup);

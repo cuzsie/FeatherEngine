@@ -177,6 +177,8 @@ class OptionsMenu extends MusicBeatState {
 
 	override function create():Void 
 	{
+		super.create();
+		
 		if (ui_Skin == null || ui_Skin == "default")
 			ui_Skin = Options.getData("uiSkin");
 
@@ -213,8 +215,6 @@ class OptionsMenu extends MusicBeatState {
 			FlxG.sound.playMusic(MusicUtilities.GetOptionsMenuMusic(), 0.7, true);
 
 		FlxG.camera.zoom = 0.9;
-
-		super.create();
 	}
 
 	var bgScroller:FlxBackdrop;

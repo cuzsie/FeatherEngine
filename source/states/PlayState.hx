@@ -1860,9 +1860,8 @@ class PlayState extends MusicBeatState {
 			vocals.pitch = songMultiplier;
 
 		if (!switchedStates) {
-			if (!(Conductor.songPosition > 20 && FlxG.sound.music.time < 20)) {
-				trace('Resynced Vocals {Conductor.songPosition: ${Conductor.songPosition}, FlxG.sound.music.time: ${FlxG.sound.music.time} / ${FlxG.sound.music.length}}');
-
+			if (!(Conductor.songPosition > 20 && FlxG.sound.music.time < 20)) 
+			{
 				vocals.pause();
 				FlxG.sound.music.pause();
 
@@ -2520,6 +2519,15 @@ class PlayState extends MusicBeatState {
 				#end
 			}
 
+			if (FlxG.keys.justPressed.FIVE && !switchedStates && !inCutscene) 
+			{
+				FlxG.timeScale += 0.1;
+			}
+			if (FlxG.keys.justPressed.FOUR && !switchedStates && !inCutscene) 
+			{
+				FlxG.timeScale -= 0.1;
+			}
+
 			// #if debug
 			if (FlxG.keys.justPressed.EIGHT && !switchedStates && !inCutscene) {
 				#if linc_luajit
@@ -2767,7 +2775,8 @@ class PlayState extends MusicBeatState {
 
 			storyPlaylist.remove(storyPlaylist[0]);
 
-			if (storyPlaylist.length <= 0) {
+			if (storyPlaylist.length <= 0) 
+			{
 				FlxG.sound.playMusic(Paths.music('freakyMenu'));
 
 				transIn = FlxTransitionableState.defaultTransIn;
@@ -2783,18 +2792,21 @@ class PlayState extends MusicBeatState {
 				SONG.keyCount = ogKeyCount;
 				SONG.playerKeyCount = ogPlayerKeyCount;
 
-				FlxG.switchState(new StoryMenuState());
+				if (SONG.song.toLowerCase() == "stress" && isStoryMode)
+					FlxG.switchState(new KickstarterState());
+				else
+					FlxG.switchState(new StoryMenuState());
 
 				if (SONG.validScore)
 					Highscore.saveWeekScore(campaignScore, storyDifficultyStr, (groupWeek != "" ? groupWeek + "Week" : "week") + Std.string(storyWeek));
-			} else {
+			} 
+			else 
+			{
 				var difficulty:String = "";
+				difficulty = storyDifficultyStr.toLowerCase();
 
-				if (storyDifficultyStr.toLowerCase() != "normal")
-					difficulty = '-' + storyDifficultyStr.toLowerCase();
-
-				trace('LOADING NEXT SONG');
-				trace(PlayState.storyPlaylist[0].toLowerCase() + difficulty);
+				trace('Loading next song in story playlist...');
+				trace(PlayState.storyPlaylist[0].toUpperCase() + " " + difficulty.toUpperCase());
 
 				if (SONG.song.toLowerCase() == 'eggnog') {
 					var blackShit:FlxSprite = new FlxSprite(-FlxG.width * FlxG.camera.zoom,
@@ -2812,7 +2824,7 @@ class PlayState extends MusicBeatState {
 				FlxTransitionableState.skipNextTransOut = true;
 				prevCamFollow = camFollow;
 
-				PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0].toLowerCase() + difficulty, PlayState.storyPlaylist[0]);
+				PlayState.SONG = Song.loadFromJson(difficulty, PlayState.storyPlaylist[0]);
 
 				if (vocals != null && vocals.active)
 					vocals.stop();
@@ -2826,7 +2838,7 @@ class PlayState extends MusicBeatState {
 		} 
 		else 
 		{
-			trace('WENT BACK TO FREEPLAY??');
+			trace('Song complete. Returning to freeplay...');
 			switchedStates = true;
 
 			if (vocals != null && vocals.active)

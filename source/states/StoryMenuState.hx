@@ -3,6 +3,7 @@ package states;
 #if discord_rpc
 import utilities.Discord.DiscordClient;
 #end
+import featherengine.Util;
 import substates.ResetScoreSubstate;
 import lime.app.Application;
 import utilities.CoolUtil;
@@ -278,9 +279,11 @@ class StoryMenuState extends MusicBeatState {
 		var dif:String = curDifficulties[curDifficulty][0].toLowerCase();
 
 		var song_name:String = PlayState.storyPlaylist[0].toLowerCase();
-		var song_file:String = song_name + (dif == "normal" ? "" : "-" + dif);
+		var song_file:String = dif;
 
-		if (!stopspamming && Assets.exists(Paths.json('song data/${song_name}/${song_file}'))) {
+		// nuts
+		if (!stopspamming && FeatherUtil.chartExists(song_name, song_file)) 
+		{
 			FlxG.sound.play(Paths.sound('confirmMenu'));
 
 			if (utilities.Options.getData("flashingLights"))
@@ -305,8 +308,8 @@ class StoryMenuState extends MusicBeatState {
 				PlayState.loadChartEvents = true;
 				LoadingState.loadAndSwitchState(new PlayState());
 			});
-		} else if (!Assets.exists(Paths.json('song data/${song_name}/${song_file}')))
-			CoolUtil.coolError('Error: ${Paths.json('song data/${song_name}/${song_file}')} not found!', "Leather Engine Crash Prevention");
+		} else if (!Assets.exists(Paths.chart('${song_name}/${song_file}')))
+			CoolUtil.coolError('Error: ${Paths.chart('${song_name}/${song_file}')} not found!', "Leather Engine Crash Prevention");
 	}
 
 	function changeDifficulty(change:Int = 0):Void {

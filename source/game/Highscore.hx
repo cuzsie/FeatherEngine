@@ -99,11 +99,6 @@ class Highscore
 
 	public static function formatSong(song:String, diff:String):String
 	{
-		var daSong:String = song.toLowerCase();
-
-		if (diff.toLowerCase() != "normal")
-			daSong += "-" + diff.toLowerCase();
-
 		return diff.toLowerCase();
 	}
 
