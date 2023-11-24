@@ -90,7 +90,7 @@ class Song {
 		} 
 		else 
 		{
-			rawJson = Assets.getText(Paths.chart("song data/tutorial/tutorial")).trim();
+			rawJson = Assets.getText(Paths.chart("tutorial/tutorial")).trim();
 
 			while (!rawJson.endsWith("}")) 
 			{

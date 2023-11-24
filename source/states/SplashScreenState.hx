@@ -37,22 +37,7 @@ class SplashScreenState extends FlxState
 
 	override public function create():Void
 	{
-		// Initiate the discord RPC client
-		#if discord_rpc
-		if (!DiscordClient.started && utilities.Options.getData("discordRPC"))
-			DiscordClient.initialize();
-
-		Application.current.onExit.add(function(exitCode) 
-		{
-			DiscordClient.shutdown();
-
-			for (key in Options.saves.keys()) 
-			{
-				if (key != null)
-					Options.saves.get(key).close();
-			}
-		}, false, 100);
-		#end
+		FlxG.camera.zoom += 0.3;
 
 		// This is required for sound and animation to synch up properly
 		_cachedTimestep = FlxG.fixedTimestep;
@@ -79,7 +64,7 @@ class SplashScreenState extends FlxState
 		_text = new TextField();
 		_text.selectable = false;
 		_text.embedFonts = true;
-		var dtf = new TextFormat(FlxAssets.FONT_DEFAULT, 16, 0xffffff);
+		var dtf = new TextFormat(FlxAssets.FONT_DEFAULT, 32, 0xffffff);
 		dtf.align = TextFormatAlign.CENTER;
 		_text.defaultTextFormat = dtf;
 		_text.text = "HaxeFlixel";
@@ -90,9 +75,21 @@ class SplashScreenState extends FlxState
 		#if FLX_SOUND_SYSTEM
 		if (!muted)
 		{
-			FlxG.sound.load(FlxAssets.getSound("flixel/sounds/flixel")).play();
+			FlxG.sound.load(Paths.sound("flixel", "preload")).play();
 		}
 		#end
+	}
+
+	private var canEnter:Bool = true;
+
+	override function update(elapsed:Float)
+	{
+		if (FlxG.keys.justPressed.ENTER && canEnter)
+		{
+			canEnter = false;
+			FlxG.sound.destroy();
+			FlxG.switchState(new TitleState());
+		}
 	}
 
 	override public function destroy():Void
@@ -130,7 +127,6 @@ class SplashScreenState extends FlxState
 
 		if (_curPart == 5)
 		{
-			// Make the logo a tad bit longer, so our users fully appreciate our hard work :D
 			FlxTween.tween(_sprite, {alpha: 0}, 3.0, {ease: FlxEase.quadOut, onComplete: onComplete});
 			FlxTween.tween(_text, {alpha: 0}, 3.0, {ease: FlxEase.quadOut});
 		}

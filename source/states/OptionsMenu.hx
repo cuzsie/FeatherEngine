@@ -91,17 +91,13 @@ class OptionsMenu extends MusicBeatState {
 		"Misc" => [
 			new PageOption("Back", 0, "Categories"),
 			new BoolOption("Prototype Title Screen", "oldTitle", 1),
-			new BoolOption("Friday Night Title Music", "nightMusic", 2),
-			new BoolOption("Watermarks", "watermarks", 3),
 			new BoolOption("Freeplay Music", "freeplayMusic", 4),
 			#if discord_rpc
-			new BoolOption("Discord RPC", "discordRPC", 5),
+			new BoolOption("Discord Presence", "discordRPC", 5),
 			#end
 			new StringSaveOption("Cutscenes Play On", ["story", "freeplay", "both"], 6, "cutscenePlaysOn"),
 			new BoolOption("Disable Debug Menus", "disableDebugMenus", 10),
 			new BoolOption("Auto Pause", "autoPause", 12),
-			new BoolOption("Freeplay Corruption", "loadAsynchronously", 13),
-			new BoolOption("Flixel Splash Screen", "flixelStartupScreen", 14),
 			new BoolOption("Skip Results", "skipResultsScreen", 15),
 			new BoolOption("Show Score", "showScore", 16),
 		],
@@ -122,18 +118,6 @@ class OptionsMenu extends MusicBeatState {
 			new BoolOption("Animated Backgrounds", "animatedBGs", 6),
 			new BoolOption("Preload Stage Events", "preloadChangeBGs", 7),
 			new BoolOption("Memory Leaks", "memoryLeaks", 8),
-		],
-		"Info Display" => [
-			new PageOption("Back", 0, "Graphics"),
-			new DisplayFontOption("Display Font", [
-				"_sans",
-				OpenFLAssets.getFont(Paths.font("vcr.ttf")).fontName,
-				OpenFLAssets.getFont(Paths.font("pixel.otf")).fontName
-			],
-				6, "infoDisplayFont"),
-			new BoolOption("FPS Counter", "fpsCounter", 3),
-			new BoolOption("Memory Counter", "memoryCounter", 4),
-			new BoolOption("Version Display", "versionDisplay", 4)
 		],
 		"Judgements" => [
 			new PageOption("Back", 0, "Gameplay"),

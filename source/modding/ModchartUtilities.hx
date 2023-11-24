@@ -230,8 +230,6 @@ class ModchartUtilities {
 		setVar("mustHit", false);
 		setVar("strumLineY", PlayState.instance.strumLine.y);
 
-		setVar("characterPlayingAs", PlayState.characterPlayingAs);
-
 		// other globals
 
 		setVar('FlxColor', {

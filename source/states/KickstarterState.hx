@@ -6,10 +6,6 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 
-#if VIDEOS_ALLOWED
-import hxcodec.VideoHandler;
-#end
-
 class KickstarterState extends MusicBeatState
 {
     override function create()

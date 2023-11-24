@@ -28,6 +28,7 @@ import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import lime.app.Application;
 import openfl.Assets;
+import flixel.math.FlxMath;
 
 using StringTools;
 
@@ -39,6 +40,8 @@ class TitleState extends MusicBeatState {
 	var textGroup:FlxGroup;
 	var ngSpr:FlxSprite;
 
+	var defaultCamZoom:Float;
+
 	var curWacky:Array<String> = [];
 
 	var wackyImage:FlxSprite;
@@ -49,6 +52,25 @@ class TitleState extends MusicBeatState {
 	override public function create():Void 
 	{
 		MusicBeatState.windowNameSuffix = "";
+
+		defaultCamZoom = FlxG.camera.zoom;
+
+		// Initiate the discord RPC client
+		#if discord_rpc
+		if (!DiscordClient.started && utilities.Options.getData("discordRPC"))
+			DiscordClient.initialize();
+
+		Application.current.onExit.add(function(exitCode) 
+		{
+			DiscordClient.shutdown();
+
+			for (key in Options.saves.keys()) 
+			{
+				if (key != null)
+					Options.saves.get(key).close();
+			}
+		}, false, 100);
+		#end
 
 		if (!firstTimeStarting) {
 			persistentUpdate = true;
@@ -90,7 +112,7 @@ class TitleState extends MusicBeatState {
 	public static var version_New:String = "v0.3";
 
 	public static function playTitleMusic() {
-		FlxG.sound.playMusic(MusicUtilities.GetTitleMusicPath(), 0);
+		FlxG.sound.playMusic(Paths.music('freakyNightMenu'), 0);
 	}
 
 	function startIntro() {
@@ -109,23 +131,13 @@ class TitleState extends MusicBeatState {
 
 			if (utilities.Options.getData("oldTitle"))
 				playTitleMusic();
-			else {
-				if (Date.now().getDay() == 5 && Date.now().getHours() >= 18 || utilities.Options.getData("nightMusic")) {
-					playTitleMusic();
-					Conductor.changeBPM(117);
-				} else {
-					playTitleMusic();
-					Conductor.changeBPM(102);
-				}
+			else 
+			{
+				playTitleMusic();
+				Conductor.changeBPM(117);
 			}
 
 			FlxG.sound.music.fadeIn(4, 0, 0.7);
-
-			Main.toggleFPS(utilities.Options.getData("fpsCounter"));
-			Main.toggleMem(utilities.Options.getData("memoryCounter"));
-			Main.toggleVers(utilities.Options.getData("versionDisplay"));
-
-			Main.changeFont(utilities.Options.getData("infoDisplayFont"));
 		}
 
 		version = 'v${Assets.getText("version.txt")}';
@@ -232,7 +244,13 @@ class TitleState extends MusicBeatState {
 
 	var transitioning:Bool = false;
 
-	override function update(elapsed:Float) {
+	override function update(elapsed:Float) 
+	{
+		
+		var camera_Zoom_Lerp = elapsed * 3;
+
+		FlxG.camera.zoom = FlxMath.lerp(FlxG.camera.zoom, defaultCamZoom, camera_Zoom_Lerp);
+
 		if (FlxG.sound.music != null)
 			Conductor.songPosition = FlxG.sound.music.time;
 
@@ -341,8 +359,11 @@ class TitleState extends MusicBeatState {
 
 	public var titleTextData:Array<String>;
 
-	override function beatHit() {
+	override function beatHit() 
+	{
 		super.beatHit();
+
+		FlxG.camera.zoom += 0.015;
 
 		if (!utilities.Options.getData("oldTitle")) {
 			logoBl.animation.play('bump');

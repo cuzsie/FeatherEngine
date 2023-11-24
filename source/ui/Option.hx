@@ -80,10 +80,6 @@ class BoolOption extends Option {
 
 		switch (Option_Value) // extra special cases
 		{
-			case "fpsCounter":
-				Main.toggleFPS(Option_Checked);
-			case "memoryCounter":
-				Main.toggleMem(Option_Checked);
 			#if discord_rpc
 			case "discordRPC":
 				if (Option_Checked && !DiscordClient.active)
@@ -91,8 +87,6 @@ class BoolOption extends Option {
 				else if (!Option_Checked && DiscordClient.active)
 					DiscordClient.shutdown();
 			#end
-			case "versionDisplay":
-				Main.toggleVers(Option_Checked);
 		}
 	}
 }
@@ -280,12 +274,5 @@ class StringSaveOption extends Option {
 
 	function SetDataIGuess() {
 		utilities.Options.setData(Current_Mode, Save_Data_Name);
-	}
-}
-
-class DisplayFontOption extends StringSaveOption {
-	override function SetDataIGuess() {
-		super.SetDataIGuess();
-		Main.changeFont(utilities.Options.getData("infoDisplayFont"));
 	}
 }

@@ -6,62 +6,101 @@ import lime.app.Application;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
 import external.memory.Memory;
+import flixel.math.FlxMath;
+import flixel.util.FlxColor;
+import openfl.Lib;
+import openfl.display.Bitmap;
+import openfl.display.BitmapData;
+import flixel.FlxG;
+import haxe.Timer;
+import openfl.events.Event;
+import openfl.text.TextField;
+import openfl.text.TextFormat;
+import utilities.ImageOutline;
+#if flash
+import openfl.Lib;
+#end
 
 /**
  * Shows basic info about the game.
  */
-class SimpleInfoDisplay extends TextField {
-	//                                      fps    mem    version
-	public var infoDisplayed:Array<Bool> = [false, false, false];
+class SimpleInfoDisplay extends TextField 
+{
+	/**
+		The current frame rate, expressed using frames-per-second
+	**/
+	public var currentFPS(default, null):Int;
 
-	public var currentFPS:Int = 0;
-    private var _calculatedFPS:Int = 0;
+	public var bitmap:Bitmap;
 
-	public var currentTime:Float = 0.0;
+	@:noCompletion private var cacheCount:Int;
+	@:noCompletion private var currentTime:Float;
+	@:noCompletion private var times:Array<Float>;
 
-	public function new(x:Float = 10.0, y:Float = 10.0, color:Int = 0x000000, ?font:String) {
+	public function new(x:Float = 10, y:Float = 10, color:Int = 0x000000)
+	{
 		super();
 
 		this.x = x;
 		this.y = y;
+
+		currentFPS = 0;
 		selectable = false;
-		defaultTextFormat = new TextFormat(font != null ? font : openfl.utils.Assets.getFont(Paths.font("vcr.ttf")).fontName, (font == "_sans" ? 12 : 14),
-        color);
+		mouseEnabled = false;
+		defaultTextFormat = new TextFormat(openfl.utils.Assets.getFont("assets/fonts/vcr.ttf").fontName, 14, color);
+		text = "FPS: ";
+		width += 200;
 
-        FlxG.signals.postDraw.add(update);
+		cacheCount = 0;
+		currentTime = 0;
+		times = [];
 
-		width = FlxG.width;
-		height = FlxG.height;
+		#if flash
+		addEventListener(Event.ENTER_FRAME, function(e)
+		{
+			var time = Lib.getTimer();
+			__enterFrame(time - currentTime);
+		});
+		#end
+
+		bitmap = ImageOutline.renderImage(this, 1, 0x000000, 1, true);
+		(cast(Lib.current.getChildAt(0), Main)).addChild(bitmap);
 	}
 
-	private function update():Void {
-		text = "";
+	var skippedFrames = 0;
 
-        currentTime += FlxG.elapsed;
+	public static var currentColor = 0;
 
-        if (currentTime >= 1) {
-            currentFPS = _calculatedFPS;
-            _calculatedFPS = 0;
-            currentTime = 0;
-        } else if (_calculatedFPS < FlxG.stage.frameRate) {
-            _calculatedFPS++;
-        }
+	// Event Handlers
+	@:noCompletion
+	private #if !flash override #end function __enterFrame(deltaTime:Float):Void
+	{
+		currentTime += deltaTime;
+		times.push(currentTime);
 
-		if (visible) {
-			for (i in 0...infoDisplayed.length) {
-				if (infoDisplayed[i]) {
-					switch (i) {
-						case 0: // FPS
-							text += '${currentFPS}fps';
-						case 1: // Memory
-							text += '${CoolUtil.formatBytes(Memory.getCurrentUsage())} / ${CoolUtil.formatBytes(Memory.getPeakUsage())}';
-						case 2: // Version
-							text += 'v${Application.current.meta.get('version')}';
-					}
-
-					text += "\n";
-				}
-			}
+		while (times[0] < currentTime - 1000)
+		{
+			times.shift();
 		}
+
+		var currentCount = times.length;
+		currentFPS = Math.round((currentCount + cacheCount) / 2);
+
+		if (currentCount != cacheCount)
+		{
+			text = "FPS: " + currentFPS;
+		}
+
+		visible = true;
+
+		Main.instance.removeChild(bitmap);
+
+		bitmap = ImageOutline.renderImage(this, 2, 0x000000, 1);
+
+		Main.instance.addChild(bitmap);
+
+		visible = false;
+
+		cacheCount = currentCount;
 	}
 }

@@ -27,6 +27,7 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import lime.utils.Assets;
 import flixel.tweens.FlxEase;
+import flixel.group.FlxGroup;
 
 using StringTools;
 
@@ -63,6 +64,13 @@ class FreeplayState extends MusicBeatState {
 		0xFFFF9900
 	];
 
+	/* DIFFICULTY UI */
+	var difficultySelectorGroup:FlxGroup;
+
+	var difficultySprite:FlxSprite;
+	var leftArrow:FlxSprite;
+	var rightArrow:FlxSprite;
+	
 	private var bg:FlxSprite;
 	private var selectedColor:Int = 0xFF7F1833;
 	private var scoreBG:FlxSprite;
@@ -162,27 +170,20 @@ class FreeplayState extends MusicBeatState {
 
 		add(bg);
 
+		var bgs:FlxSprite = new FlxSprite(-600, -200);
+		bgs.loadGraphic(Paths.image("stage/stageback", "stages"));
+		bgs.scrollFactor.set(0.9, 0.9);
+		add(bgs);
+
+		var stageFront:FlxSprite = new FlxSprite(-650, 600);
+		stageFront.loadGraphic(Paths.image("stage/stagefront", "stages"));
+		stageFront.setGraphicSize(Std.int(stageFront.width * 1.1));
+		stageFront.scrollFactor.set(1, 1);
+		stageFront.updateHitbox();
+		add(stageFront);
+
 		grpSongs = new FlxTypedGroup<Alphabet>();
 		add(grpSongs);
-
-		scoreText = new FlxText(FlxG.width, 5, 0, "", 32);
-
-		scoreBG = new FlxSprite(scoreText.x - 6, 0).makeGraphic(1, 1, 0xFF000000);
-		scoreBG.alpha = 0.6;
-		add(scoreBG);
-
-		scoreText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, RIGHT);
-		add(scoreText);
-
-		diffText = new FlxText(FlxG.width, scoreText.y + 36, 0, "", 24);
-		diffText.font = scoreText.font;
-		diffText.alignment = RIGHT;
-		add(diffText);
-
-		speedText = new FlxText(FlxG.width, diffText.y + 36, 0, "", 24);
-		speedText.font = scoreText.font;
-		speedText.alignment = RIGHT;
-		add(speedText);
 
 		#if sys
 		if (!Options.getData("loadAsynchronously") || !Options.getData("healthIcons")) {
@@ -222,6 +223,56 @@ class FreeplayState extends MusicBeatState {
 			});
 		}
 		#end
+
+		scoreBG = new FlxSprite(0,-25).makeGraphic(1920, 100, 0xFF000000);
+		scoreBG.alpha = 0.6;
+		scoreBG.screenCenter(X);
+		add(scoreBG);
+
+		scoreText = new FlxText(FlxG.width, 5, 0, "", 32);
+		scoreText.screenCenter(X);
+		scoreText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER);
+		add(scoreText);
+
+		diffText = new FlxText(FlxG.width, scoreText.y + 36, 0, "", 24);
+		diffText.font = scoreText.font;
+		diffText.alignment = RIGHT;
+		add(diffText);
+
+		speedText = new FlxText(FlxG.width, 0, 0, "", 24);
+		speedText.font = scoreText.font;
+		speedText.alignment = RIGHT;
+		add(speedText);
+
+		difficultySelectorGroup = new FlxGroup();
+		add(difficultySelectorGroup);
+
+		var arrow_Tex = Paths.getSparrowAtlas('campaign menu/ui_arrow');
+
+		leftArrow = new FlxSprite(0, 0);
+		leftArrow.frames = arrow_Tex;
+		leftArrow.animation.addByPrefix('idle', "arrow0");
+		leftArrow.animation.addByPrefix('press', "arrow push", 24, false);
+		leftArrow.animation.play('idle');
+		leftArrow.scrollFactor.set();
+
+		difficultySprite = new FlxSprite(leftArrow.x + leftArrow.width + 4, leftArrow.y);
+		difficultySprite.loadGraphic(Paths.image("campaign menu/difficulties/default/normal"));
+		difficultySprite.updateHitbox();
+		difficultySprite.scrollFactor.set();
+		//changeDifficulty();
+
+		rightArrow = new FlxSprite(difficultySprite.x + difficultySprite.width + 4, leftArrow.y);
+		rightArrow.frames = arrow_Tex;
+		rightArrow.animation.addByPrefix('idle', 'arrow0');
+		rightArrow.animation.addByPrefix('press', "arrow push", 24, false);
+		rightArrow.animation.play('idle');
+		rightArrow.flipX = true;
+		rightArrow.scrollFactor.set();
+
+		difficultySelectorGroup.add(leftArrow);
+		difficultySelectorGroup.add(difficultySprite);
+		difficultySelectorGroup.add(rightArrow);
 
 		selector = new FlxText();
 
@@ -309,13 +360,14 @@ class FreeplayState extends MusicBeatState {
 		if (diffText.width >= scoreText.width && diffText.width >= speedText.width)
 			funnyObject = diffText;
 
-		scoreBG.x = funnyObject.x - 6;
+		//scoreBG.x = funnyObject.x - 6;
 
-		if (Std.int(scoreBG.width) != Std.int(funnyObject.width + 6))
-			scoreBG.makeGraphic(Std.int(funnyObject.width + 6), 108, FlxColor.BLACK);
+		//if (Std.int(scoreBG.width) != Std.int(funnyObject.width + 6))
+			//scoreBG.makeGraphic(Std.int(funnyObject.width + 6), 108, FlxColor.BLACK);
 
 		scoreText.x = FlxG.width - scoreText.width;
-		scoreText.text = "PERSONAL BEST:" + lerpScore;
+		scoreText.text = "PERSONAL BEST:" + lerpScore + "\nRank: " + curRank;
+		scoreText.screenCenter(X);
 
 		diffText.x = FlxG.width - diffText.width;
 
@@ -363,6 +415,17 @@ class FreeplayState extends MusicBeatState {
 				changeDiff(1);
 			else if (rightP && shift)
 				curSpeed += 0.05;
+			
+			if (leftP && !shift)
+				rightArrow.animation.play('press')
+			else
+				rightArrow.animation.play('idle');
+
+			if (rightP && !shift)
+				leftArrow.animation.play('press');
+			else
+				leftArrow.animation.play('idle');
+
 
 			if (FlxG.keys.justPressed.R && shift)
 				curSpeed = 1;
@@ -412,7 +475,7 @@ class FreeplayState extends MusicBeatState {
 
 				var poop:String = Highscore.formatSong(songs[curSelected].songName.toLowerCase(), curDiffString);
 
-				if (Assets.exists(Paths.json("song data/" + songs[curSelected].songName.toLowerCase() + "/" + poop))) {
+				if (Assets.exists(Paths.chart(songs[curSelected].songName.toLowerCase() + "/" + poop))) {
 					PlayState.SONG = Song.loadFromJson(poop, songs[curSelected].songName.toLowerCase());
 					Conductor.changeBPM(PlayState.SONG.bpm, curSpeed);
 				}
@@ -489,9 +552,21 @@ class FreeplayState extends MusicBeatState {
 		super.closeSubState();
 	}
 
-	function changeDiff(change:Int = 0) {
+	var curDifficulties:Array<Array<String>> = [["easy", "default/easy"], ["normal", "default/normal"], ["hard", "default/hard"]];
+	var defaultDifficulties:Array<Array<String>> = [["easy", "default/easy"], ["normal", "default/normal"], ["hard", "default/hard"]];
+
+	function changeDiff(change:Int = 0) 
+	{
 		curDifficulty = FlxMath.wrap(curDifficulty + change, 0, curDiffArray.length - 1);
 		curDiffString = curDiffArray[curDifficulty].toUpperCase();
+
+		difficultySprite.loadGraphic(Paths.image("campaign menu/difficulties/" + curDifficulties[curDifficulty][1]));
+		difficultySprite.updateHitbox();
+		difficultySprite.alpha = 0;
+		difficultySprite.x = leftArrow.x + leftArrow.width + 4;
+		difficultySprite.y = 0;
+
+		if (rightArrow != null) rightArrow.x = difficultySprite.x + difficultySprite.width + 4;
 
 		#if !switch
 		intendedScore = Highscore.getScore(songs[curSelected].songName, curDiffString);

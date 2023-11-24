@@ -17,33 +17,34 @@ class OutdatedSubState extends MusicBeatState
 
 	override function create()
 	{
+		var ver = "v" + Application.current.meta.get('version');
+
 		super.create();
 
 		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		add(bg);
 
-		var ver = "v" + Application.current.meta.get('version');
-
 		var txt:FlxText = new FlxText(0, 0, FlxG.width,
-			"HEY! You're running an outdated version of the game!\nCurrent version is "
-			+ ver
-			+ " while the most recent version is "
-			+ TitleState.version_New
-			+ "! Press Enter to go to the GitHub Page, or ESCAPE to ignore this!! (Probably shouldn't, but you can.)",
-			32);
+
+		"Hey!\n" + 
+		"This mod is powered by FEATHER ENGINE." +
+		"\nThe current version that you are running is outdated!\nYou are running " + ver + " while the most recent version is " + TitleState.version_New + "!\n" + 
+		"Press Enter to dismiss this message, or ESCAPE to download the newest version!",
+
+		32);
+		
 		txt.setFormat("VCR OSD Mono", 32, FlxColor.WHITE, CENTER);
 		txt.screenCenter();
+		txt.color = FlxColor.RED;
 		add(txt);
 	}
 
 	override function update(elapsed:Float)
 	{
-		if (controls.ACCEPT)
-		{
-			CoolUtil.openURL("https://github.com/Leather128/LeathersFunkinEngine");
-		}
-
 		if (controls.BACK)
+			CoolUtil.openURL("https://github.com/cuzsie/Feather-Engine/releases");
+
+		if (controls.ACCEPT)
 		{
 			leftState = true;
 			FlxG.switchState(new MainMenuState());

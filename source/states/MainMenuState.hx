@@ -1,5 +1,6 @@
 package states;
 
+import game.Song;
 import utilities.Options;
 import flixel.util.FlxTimer;
 import utilities.MusicUtilities;
@@ -12,6 +13,7 @@ import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.effects.FlxFlicker;
+import flixel.math.FlxMath;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.text.FlxText;
@@ -34,6 +36,9 @@ class MainMenuState extends MusicBeatState
 	var magenta:FlxSprite;
 	var camFollow:FlxObject;
 	var ui_Skin:Null<String>;
+	var bg:FlxSprite;
+
+	var hue:Float = 0;
 
 	override function create()
 	{
@@ -61,8 +66,6 @@ class MainMenuState extends MusicBeatState
 
 		persistentUpdate = persistentDraw = true;
 
-		var bg:FlxSprite;
-
 		if(utilities.Options.getData("menuBGs"))
 			if (!Assets.exists(Paths.image('ui skins/' + ui_Skin + '/backgrounds' + '/menuBG')))
 				bg = new FlxSprite(-80).loadGraphic(Paths.image('ui skins/default/backgrounds/menuBG'));
@@ -78,6 +81,9 @@ class MainMenuState extends MusicBeatState
 		bg.screenCenter();
 		bg.antialiasing = true;
 		add(bg);
+
+		defaultBGX = bg.scale.x;
+		defaultBGY = bg.scale.y;
 
 		camFollow = new FlxObject(0, 0, 1, 1);
 		add(camFollow);
@@ -131,6 +137,7 @@ class MainMenuState extends MusicBeatState
 		var versionShit:FlxText = new FlxText(5, FlxG.height - 25, 0, "Feather Engine " + TitleState.version + " " + sysName, 16);
 		versionShit.scrollFactor.set();	
 		versionShit.setFormat(Paths.font("game.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		versionShit.antialiasing = true;
 		add(versionShit);
 
 		changeItem();
@@ -139,6 +146,8 @@ class MainMenuState extends MusicBeatState
 	}
 
 	var selectedSomethin:Bool = false;
+	var defaultBGX:Float = 0;
+	var defaultBGY:Float = 0;
 
 	override function update(elapsed:Float)
 	{
@@ -146,6 +155,15 @@ class MainMenuState extends MusicBeatState
 
 		if (FlxG.sound.music.volume < 0.8)
 			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
+
+		// THIS DIDN'T LOOK GOOD LOLOL
+		/*hue += elapsed * 25;
+
+		if (hue > 360)
+			hue -= 360;
+
+		var color = FlxColor.fromHSB(Std.int(hue), 1, 1);
+		bg.color = color;*/
 
 		if (!selectedSomethin)
 		{
@@ -169,7 +187,13 @@ class MainMenuState extends MusicBeatState
 			
 			if (FlxG.keys.justPressed.SEVEN)
 			{
-				FlxG.switchState(new KickstarterState());
+				// VERSUS MODE DEBUG
+				PlayState.SONG = Song.loadFromJson("hard", "dad battle");
+				PlayState.isStoryMode = false;
+				PlayState.storyDifficultyStr = "HARD";
+
+				PlayState.storyWeek = 1;
+				PlayState.versusMode = true;
 			}
 
 			if (controls.ACCEPT)
@@ -205,12 +229,24 @@ class MainMenuState extends MusicBeatState
 			}
 		}
 
+		var camera_Zoom_Lerp = elapsed * 3;
+
+		bg.scale.set(FlxMath.lerp(bg.scale.x, defaultBGX, camera_Zoom_Lerp), FlxMath.lerp(bg.scale.y, defaultBGY, camera_Zoom_Lerp));
+
 		super.update(elapsed);
 
 		menuItems.forEach(function(spr:FlxSprite)
 		{
 			spr.screenCenter(X);
 		});
+	}
+
+	override function beatHit() 
+	{
+		super.beatHit();
+	
+		bg.scale.add(0.2, 0.2);
+		bg.scale.add(0.2, 0.2);
 	}
 
 	function fard()

@@ -15,6 +15,7 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import states.OptionsMenu;
+import flixel.addons.display.FlxBackdrop;
 
 class PauseSubState extends MusicBeatSubstate {
 	var grpMenuShit:FlxTypedGroup<Alphabet> = new FlxTypedGroup<Alphabet>();
@@ -33,6 +34,8 @@ class PauseSubState extends MusicBeatSubstate {
 	var warningAmountLols:Int = 0;
 
 	var pauseCamera:FlxCamera = new FlxCamera();
+
+	var bgScroller:FlxBackdrop;
 
 	public function new() {
 		super();
@@ -65,6 +68,12 @@ class PauseSubState extends MusicBeatSubstate {
 		bg.alpha = 0;
 		bg.scrollFactor.set();
 		add(bg);
+
+		bgScroller = new FlxBackdrop(Paths.image("endChecker", "preload"));
+		bgScroller.alpha = 0;
+		add(bgScroller);
+
+		FlxTween.tween(bgScroller, {alpha: 1}, 0.5);
 
 		var levelInfo:FlxText = new FlxText(20, 15, 0, "", 32);
 		levelInfo.text += PlayState.SONG.song;
@@ -102,6 +111,9 @@ class PauseSubState extends MusicBeatSubstate {
 			pauseMusic.volume += 0.01 * elapsed;
 
 		super.update(elapsed);
+
+		bgScroller.x -= 0.4;
+		bgScroller.y -= 0.5;
 
 		var upP = controls.UP_P;
 		var downP = controls.DOWN_P;

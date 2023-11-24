@@ -16,6 +16,7 @@ import lime.utils.AssetManifest;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 import flixel.util.FlxColor;
+import flixel.system.FlxSound;
 
 import haxe.io.Path;
 
@@ -23,6 +24,12 @@ class LoadPlayState extends MusicBeatState
 {	
 	override function create()
 	{
+		FlxTransitionableState.skipNextTransIn = true;
+		FlxTransitionableState.skipNextTransOut = true;
+
+		PlayState.waitingMusic = new FlxSound().loadEmbedded(Paths.music("waiting", "shared"));
+		PlayState.waitingMusic.play();
+
 		MusicBeatState.windowNameSuffix = " is loading...";
 
 		var realBG:FlxSprite = new FlxSprite();
@@ -41,9 +48,9 @@ class LoadPlayState extends MusicBeatState
 		FlxG.camera.zoom = 0.7;
 		FlxG.camera.alpha = 0;
 
-		FlxTween.tween(FlxG.camera, {alpha: 1}, 0.8);
+		FlxTween.tween(FlxG.camera, {alpha: 1}, 0.3);
 
-		new FlxTimer().start(1.5, function(_) onLoad());
+		new FlxTimer().start(1, function(_) onLoad());
 	}
 	
 	function onLoad()
